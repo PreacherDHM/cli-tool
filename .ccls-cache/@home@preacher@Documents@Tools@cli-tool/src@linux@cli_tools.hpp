@@ -1,13 +1,24 @@
 #ifndef CLI_TOOLS_HPP
 #define LINUX
 #ifdef LINUX 
+
+#include <vector>
+
 namespace clts {
     enum color {
        red,
        blue,
        green,
+       lightBlue,
     };
     
+    // These functions need a windows and a linux version
+
+    void setup();
+    void pos(int x, int y);
+    void setColor(color color);
+    void getTerminalSize(int& posXOut, int& posXout);
+
     class pain {
     public:
         /*# pain**(posX, posY, sizeX, sizeY)**
@@ -21,17 +32,31 @@ namespace clts {
         pain(int posX, int posY, int sizeX, int sizeY, int layer);
         
         // text buffer of pain
-        const char buffer;
+        const char* buffer;
         
         // This is the id for the pain for the masterPain.
         int id;
+
+        // This is the layer that the pain will display
+        int painLayer;
 
         // Position of pain
         int painPosX;
         int painPosY;
         // size of pain
-        int sizeX;
-        int sizeY;
+        int painSizeX;
+        int painSizeY;
+        
+        bool isActive;
+
+        int getLayer()  { return painLayer; }
+        int getPosX()   { return painPosX; }
+        int getPosY()   { return painPosY; }
+        int getSizeX()  { return painSizeX; }
+        int getSizeY()  { return painSizeY; }
+        int getid()     { return id; }
+
+        bool getIsActive();
 
         void write(const char* current);
         void moveCursor(int posX, int posY);
@@ -42,29 +67,25 @@ namespace clts {
 
     class masterPain {
     private:
-        int sizeX;
-        int sizeY;
+        int painSizeX;
+        int painSizeY;
+        pain* pains[100];
 
         void refreshMasterPainSize();
 
     public:
         void update();
-        void addPain(pain* addedPain);
         void removePain(int id);
-        pain getActivePain();
-        pain setActivePain(int id);
+        pain* addPain(pain* addedPain);
+        pain* getActivePain();
+        pain* setActivePain(int id);
+        pain* createPain(int posX, int posY,int sizeX,int sizeY, int layer);
+        pain** getPainList();
         int getSizeX();
         int getSizeY();
 
     };
 
-    // These functions need a windows and a linux version
-
-    void setup();
-    void pos(int x, int y);
-    void setColor(color color);
-    pain createPain(int posX, int posY,int sizeX,int sizeY, int layer);
-    void getTerminalSize(int& posXOut, int& posXout);
 
 }
 #endif // !LINUX 
